@@ -3,6 +3,7 @@ package com.br.service.service.traffic;
 import com.alibaba.fastjson.JSON;
 import com.br.entity.map.Plane;
 import com.br.entity.websocket.WSMessage;
+import com.br.mapper.PlaneMapper;
 import com.br.service.constant.RedisDataConstant;
 import com.br.service.constant.WSMessageConstant;
 import com.br.service.service.redis.RedisService;
@@ -11,6 +12,7 @@ import com.br.service.service.websocket.WSService;
 import com.route.imp.PositionPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +39,10 @@ public class PositionService {
     @Autowired
     private TrafficTaskService trafficTaskService;
 
+    // Plane Mapper
+    @Autowired
+    private PlaneMapper planeMapper;
+
 
     /**
      * 记录飞机的实时位置
@@ -44,13 +50,14 @@ public class PositionService {
      * @param planes 飞机信息集合
      */
     public void savePlanesInfo(List<Plane> planes) {
+        this.sendPlanePositionObject(planes);
         if (planes != null && planes.size() > 0) {
-            Map<String, Object> aDSBInfosMap = new HashMap<>();
-            for (Plane aDSBInfo : planes) {
-                aDSBInfosMap.put(aDSBInfo.getPlaneSeq(), aDSBInfo);
+            Map<String, Object> planeMap = new HashMap<>();
+            for (Plane plane : planes) {
+                planeMap.put(plane.getPlaneSeq(), plane);
+                this.planeMapper.add(plane);
             }
-            this.redisService.saveCacheOfHash(RedisDataConstant.HASH_PLANE, aDSBInfosMap);
-            this.sendPlanePositionObject(planes);
+            this.redisService.saveCacheOfHash(RedisDataConstant.HASH_PLANE, planeMap);
         }
     }
 

@@ -134,6 +134,7 @@
         <module>airport-service</module>
         <module>airport-web</module>
         <module>airport-mapper</module>
+        <module>airport-tcp-server</module>
     </modules>
 
     <!--指定使用maven打包-->

@@ -17,6 +17,9 @@ import java.math.BigDecimal;
 public class Plane {
     @Getter
     @Setter
+    private Integer planeInfoSeq;
+    @Getter
+    @Setter
     private String planeAddrCode;
     @Getter
     @Setter

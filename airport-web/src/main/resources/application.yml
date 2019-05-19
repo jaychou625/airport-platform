@@ -42,10 +42,10 @@ spring:
     pub-sub-domain: true
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://127.0.0.1:3306/airport_platform?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&SSL=false&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=convertToNull
+    url: jdbc:mysql://127.0.0.1:3306/airport-platform?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&SSL=false&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=convertToNull
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password:
+    password: root
     druid:
       filter: stat
       initial-size: 10

@@ -35,6 +35,24 @@
             <artifactId>airport-mapper</artifactId>
             <version>${airport-mapper.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.br</groupId>
+            <artifactId>airport-tcp-server</artifactId>
+            <version>unknown</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.br</groupId>
+            <artifactId>airport-tcp-server</artifactId>
+            <version>unknown</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.br</groupId>
+            <artifactId>airport-tcp-server</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
