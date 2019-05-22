@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * 站坪数据处理类
@@ -89,6 +90,7 @@ public class ApronDataHandler {
                             //读取对应字段的数据，判断是否为第一次执行任务
                             TaskInfo temp = JSON.parseObject(jedis.hget(taskInfo.getPrcName(),String.valueOf(taskInfo.getStartTime().getTime())),new TypeReference<TaskInfo>() {});
                             if(temp != null){
+                                taskInfo.setTaskNo(temp.getTaskNo());
                                 if(temp.getCount() == null){
                                     Map<String,String> map = new HashMap<>();
                                     map.put(String.valueOf(taskInfo.getStartTime().getTime()),JSON.toJSONString(taskInfo));
@@ -100,6 +102,7 @@ public class ApronDataHandler {
                                     jedis.hmset(taskInfo.getPrcName(), map);
                                 }
                             }else{
+                                taskInfo.setTaskNo(UUID.randomUUID().toString().replaceAll("-",""));
                                 Map<String,String> map = new HashMap<>();
                                 map.put(String.valueOf(taskInfo.getStartTime().getTime()),JSON.toJSONString(taskInfo));
                                 jedis.hmset(taskInfo.getPrcName(), map);

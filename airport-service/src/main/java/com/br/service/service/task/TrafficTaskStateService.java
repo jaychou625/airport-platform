@@ -5,6 +5,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.br.entity.map.CarInfo;
 import com.br.entity.task.TaskInfo;
 import com.br.entity.task.TaskObject;
+import com.br.entity.task.TaskStateInfo;
 import com.pl.firstSocket.utils.MapSort;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
@@ -26,9 +27,9 @@ public class TrafficTaskStateService {
      * @return Map:key--"state":任务状态（0：任务开始，1:任务进行中，2：任务结束，-1任务未开始），
      * "portNo":机位，"fltNo":航班号,"taskInfo":任务信息对象
      */
-    public Map<String,Object> getTaskState(CarInfo carInfo){
+    public TaskStateInfo getTaskState(CarInfo carInfo){
 
-        Map<String,Object> state = new HashMap<>();
+        TaskStateInfo state = new TaskStateInfo();
         //获取车辆类型
         String carType = carInfo.getCar().getCarType();
         //查询redis数据库匹配车型最新的任务记录
@@ -36,7 +37,8 @@ public class TrafficTaskStateService {
         jedis.select(3);
         //获取最新的任务信息
         Map<String,String> map = jedis.hgetAll(carType);
-        if(map == null){
+        if(map.size() == 0){
+            state.setState(-1);
             return state;
         }
         map = MapSort.sortMapByKey(map);
@@ -47,16 +49,16 @@ public class TrafficTaskStateService {
         if(taskInfo.getStartTime() != null && taskInfo.getEndTime() == null) {
             //判断是否为第一次接受到任务
             if(taskInfo.getCount() == null){//任务开始
-                state.put("state",0);
+                state.setState(0);
                 taskInfo.setCount(1);
                 jedis.hset(taskInfo.getPrcName(),String.valueOf(taskInfo.getStartTime().getTime()),JSON.toJSONString(taskInfo));
             }else{//执行中
-                state.put("state",1);
+                state.setState(1);
             }
         }else if(taskInfo.getStartTime() != null && taskInfo.getEndTime() != null){//任务结束
-            state.put("state",2);
-        }else{
-            state.put("state",-1);
+            state.setState(2);
+        }else if(taskInfo.getStartTime() == null){//任务未开始
+            state.setState(-1);
         }
         //获取任务对应航班号
         jedis.select(4);
@@ -69,14 +71,17 @@ public class TrafficTaskStateService {
         }
         TaskObject taskObject = JSON.parseObject(jedis.hget(String.valueOf(taskInfo.getFid()),tempDate),new TypeReference<TaskObject>() {});
         if(taskObject != null){
-            state.put("portNo",taskObject.getPortNo());
-            state.put("fltNo",taskObject.getFltNo());
-        }else{
-            state.put("portNo","");
-            state.put("fltNo","");
+            state.setPortNo(taskObject.getPortNo());
+            state.setFltNo(taskObject.getFltNo());
         }
 
-        state.put("taskInfo",taskInfo);
+        //设置相关信息
+        state.setId(taskInfo.getTaskNo());
+        state.setCarType(carType);
+        state.setCarNo(carInfo.getCar().getCarNo());
+        state.setDriverName(taskInfo.getFeedBackName());
+        state.setStartTime(taskInfo.getStartTime());
+        state.setEndTime(taskInfo.getEndTime());
 
 
 

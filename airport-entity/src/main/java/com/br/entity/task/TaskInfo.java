@@ -29,4 +29,6 @@ public class TaskInfo {
     @Getter @Setter private Integer feedBackType;
     //计数，判断是否为第一次执行任务，0为第一次
     @Getter @Setter private Integer count;
+    //任务编号，自定义
+    @Getter @Setter private String taskNo;
 }
