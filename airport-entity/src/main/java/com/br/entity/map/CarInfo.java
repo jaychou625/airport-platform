@@ -19,7 +19,7 @@ public class CarInfo {
     Integer carInfoSeq;
     @Getter
     @Setter
-    Integer carSeq;
+    Car car;
     @Getter
     @Setter
     BigDecimal carLongitude;
